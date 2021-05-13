@@ -1,5 +1,15 @@
 # 普通知识
 
+
+
+## str, list, tuple, dict, set, Error
+
+
+
+### str
+
+
+
 ```python
 # 字符串可以被当作字符列表
 "This is a string"[0]  # => ‘T’
@@ -21,6 +31,20 @@ None # => None
 "etc" is None # => False
 None is None # => True
 
+string.strip() # 去掉string前后的空隙
+
+# 不可变对象
+
+# str是不变对象，而list是可变对象。
+# 字符串"xxx"也可以看成是一种list，每个元素就是一个字符。因此，字符串也可以用切片操作，只是操作结果仍是字符串
+```
+
+
+
+### list
+
+```python
+
 # 用列表(list)储存序列
 li = []
 # 创建列表时也可以同时赋给元素
@@ -38,10 +62,15 @@ li.append(3) # li变回[1, 2, 4, 3]
 
 # 列表存取跟数组一样
 li[0] # => 1
-# 取出最后一个元素
+# 取出最后一个元素 
 li[-1] # => 3
 
-# 列表有切割语法
+li[-2:-1] # => [4]
+li[-2:] # =>[4, 3]
+
+
+
+# 列表有切割语法 切片
 li[1:3] # => [2, 4]
 # 取尾
 li[2:] # => [4, 3]
@@ -67,8 +96,13 @@ li.extend(other_li) # li现在是[1, 2, 3, 4, 5, 6]
 # 用in测试列表是否包含值
 1 in li # => True
 
+```
 
 
+
+### tuple
+
+```python
 # tuple 元组是不可改变的序列(指向永远不变), 它也没有append()，insert()这样的方法。其他获取元素的方法和list是一样的，你可以正常地使用tup[0]，tup[-1]，但不能赋值成另外的元素。
 tup = (1, 2, 3)
 tup[0] # => 1
@@ -93,8 +127,14 @@ t = ('a', 'b', ['A', 'B']) # 三个元素：两个str 和 一个list
 t[2][0] = 'X'
 t[2][1] = 'Y'
 t # ('a', 'b', ['X', 'Y']) 没有改变， 只是列表里的改变了
+# tuple也是一种list，唯一区别是tuple不可变。因此，tuple也可以用切片操作，只是操作的结果仍是tuple
+```
 
 
+
+### dict
+
+```python
 # 用字典表达映射关系
 empty_dict = {}
 # 初始化的字典
@@ -130,8 +170,13 @@ filled_dict[“four”] = 4 # 另一种赋值方法
 
 # 用del删除
 del filled_dict[“one”] # 从filled_dict中把one删除
+```
 
 
+
+### set
+
+```python
 # set和dict的唯一区别仅在于没有存储对应的value，但是，set的原理和dict一样，所以，同样不可以放入可变对象，因为无法判断两个可变对象是否相等，也就无法保证set内部“不会有重复元素”。试试把list放入set，看看是否会报错。
 
 # 用set表达集合 set和dict类似，也是一组key的集合，但不存储value。由于key不能重复，所以，在set中，没有重复的key。
@@ -161,16 +206,11 @@ filled_set | other_set # => {1, 2, 3, 4, 5, 6}
 2 in filled_set # => True
 10 in filled_set # => False
 
-
-# 不可变对象
-
-# str是不变对象，而list是可变对象。
-
 ```
 
 
 
-**Error**
+### **Error**
 
 ```python
 # 访问未赋值的变量会抛出异常
@@ -197,11 +237,12 @@ else: # else语句是可选的，必须在所有的except之后
 
 
 
-**Dict**
+### iterable 和 iterator 区别
+
+
 
 ```python
-# Python提供一个叫做可迭代(iterable)的基本抽象。一个可迭代对象是可以被当作序列
-# 的对象。比如说上面range返回的对象就是可迭代的。
+# Python提供一个叫做可迭代(iterable)的基本抽象。一个可迭代对象是可以被当作序列的对象。比如说上面range返回的对象就是可迭代的。
 
 filled_dict = {“one”: 1, “two”: 2, “three”: 3}
 our_iterable = filled_dict.keys()
@@ -230,11 +271,180 @@ our_iterator.__next__() # 抛出StopIteration
 
 # 可以用list一次取出迭代器所有的元素
 list(filled_dict.keys()) # => Returns [“one”, “two”, “three”]
+
+# Python的for循环不仅可以用在list或tuple上，还可以作用在其他可迭代对象上。比如dict就可以迭代：
+>>> d = {'a': 1, 'b': 2, 'c': 3}
+>>> for key in d:
+...     print(key)
+a
+c
+b
+# 默认情况下，dict迭代的是key。如果要迭代value，可以用for value in d.values()，如果要同时迭代key和value，可以用for k, v in d.items()。
+
+# 如何判断一个对象是可迭代对象呢？方法是通过collections模块的Iterable类型判断：
+
+>>> from collections import Iterable
+>>> isinstance('abc', Iterable) # str是否可迭代
+True
+>>> isinstance([1,2,3], Iterable) # list是否可迭代
+True
+>>> isinstance(123, Iterable) # 整数是否可迭代
+False
+
+# Python内置的enumerate函数可以把一个list变成 索引-元素对，这样就可以在for循环中同时迭代索引和元素本身：
+>>> for i, value in enumerate(['A', 'B', 'C']):
+...     print(i, value)
+...
+0 A
+1 B
+2 C
+
+# 可以被next()函数调用并不断返回下一个值的对象称为迭代器：Iterator。
+# 可以使用isinstance()判断一个对象是否是Iterator对象：
+>>> from collections.abc import Iterator
+>>> isinstance((x for x in range(10)), Iterator)
+True
+>>> isinstance([], Iterator)
+False
+>>> isinstance({}, Iterator)
+False
+>>> isinstance('abc', Iterator)
+False
+
+# 生成器都是Iterator对象，但list、dict、str虽然是Iterable，却不是Iterator。把list、dict、str等Iterable变成Iterator可以使用iter()函数：
+
+>>> isinstance(iter([]), Iterator)
+True
+>>> isinstance(iter('abc'), Iterator)
+True
+
+for x in [1, 2, 3, 4, 5]:
+    pass
+  
+# 完全等价于
+
+# 首先获得Iterator对象:
+it = iter([1, 2, 3, 4, 5])
+# 循环:
+while True:
+    try:
+        # 获得下一个值:
+        x = next(it)
+    except StopIteration:
+        # 遇到StopIteration就退出循环
+        break
 ```
 
 
 
-**Function**
+## **高级特性**
+
+```python
+# List Comprehensions
+
+# 列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。
+>>> [x * x for x in range(1, 11)]
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+>>> [m + n for m in 'ABC' for n in 'XYZ'] # 两层循环
+['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ']
+
+>>> d = {'x': 'A', 'y': 'B', 'z': 'C' }
+>>> [k + '=' + v for k, v in d.items()]
+['y=B', 'x=A', 'z=C']
+
+>>> L = ['Hello', 'World', 'IBM', 'Apple']
+>>> [s.lower() for s in L]
+['hello', 'world', 'ibm', 'apple']
+
+
+>>> [x for x in range(1, 11) if x % 2 == 0]
+[2, 4, 6, 8, 10]
+
+# 另一些童鞋发现把if写在for前面必须加else，否则报错：这是因为for前面的部分是一个表达式，它必须根据x计算出一个结果。因此，考察表达式：x if x % 2 == 0，它无法根据x计算出结果，因为缺少else，必须加上else：
+
+>>> [x if x % 2 == 0 else -x for x in range(1, 11)]
+[-1, 2, -3, 4, -5, 6, -7, 8, -9, 10]
+
+# 上述for前面的表达式x if x % 2 == 0 else -x才能根据x计算出确定的结果。
+# 可见，在一个列表生成式中，for前面的if ... else是表达式，而for后面的if是过滤条件，不能带else。
+
+# 在Python中，这种一边循环一边计算的机制，称为生成器：generator。节省内存空间
+# 要创建一个generator，有很多种方法。第一种方法很简单，只要把一个列表生成式的[]改成()，就创建了一个generator：
+
+>>> L = [x * x for x in range(10)]
+>>> L
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+>>> g = (x * x for x in range(10))
+>>> g
+<generator object <genexpr> at 0x1022ef630>
+# L是一个list，而g是一个generator。
+
+# 如果要一个一个打印出来，可以通过next()函数获得generator的下一个返回值 或者 通过for循环来迭代它
+def fib(max):
+    n, a, b = 0, 0, 1
+    while n < max:
+        print(b)
+        a, b = b, a + b
+        n = n + 1
+    return 'done'
+# 上面的函数和generator仅一步之遥。要把fib函数变成generator，只需要把print(b)改为 yield b 就可以了：
+
+def fib(max):
+    n, a, b = 0, 0, 1
+    while n < max:
+        yield b 
+        a, b = b, a + b
+        n = n + 1
+    return 'done'
+  
+>>> f = fib(6)
+>>> f
+<generator object fib at 0x104feaaa0>
+
+# 但是用for循环调用generator时，发现拿不到generator的return语句的返回值。如果想要拿到返回值，必须捕获StopIteration错误，返回值包含在StopIteration的value中：
+
+>>> g = fib(6)
+>>> while True:
+...     try:
+...         x = next(g)
+...         print('g:', x)
+...     except StopIteration as e:
+...         print('Generator return value:', e.value)
+...         break
+...
+g: 1
+g: 1
+g: 2
+g: 3
+g: 5
+g: 8
+Generator return value: done
+
+# 这些可以直接作用于for循环的对象统称为可迭代对象：Iterable。
+# 可以使用isinstance()判断一个对象是否是Iterable对象：
+
+>>> from collections.abc import Iterable
+>>> isinstance([], Iterable)
+True
+>>> isinstance({}, Iterable)
+True
+>>> isinstance('abc', Iterable)
+True
+>>> isinstance((x for x in range(10)), Iterable)
+True
+>>> isinstance(100, Iterable)
+False
+
+# 而生成器不但可以作用于for循环，还可以被next()函数不断调用并返回下一个值，直到最后抛出StopIteration错误表示无法继续返回下一个值了。
+
+```
+
+
+
+# 函数 Function
+
+
 
 ```python
 # 用def定义新函数
@@ -303,29 +513,88 @@ def create_adder(x):
 add_10 = create_adder(10)
 add_10(3) # => 13
 
+
+
+
 # 也有匿名函数
 (lambda x: x > 2)(3) # => True
 
-# 内置的高阶函数
 
+
+
+
+# 内置的高阶函数
+map(function, Iterable)
 map(add_10, [1, 2, 3]) # => [11, 12, 13]
-# map()接收一个函数 f 和一个 list, 并通过把函数 f 依次作用在 list 的每个元素上，得到一个新的 list 并返回
+>>> def f(x):
+...     return x * x
+...
+>>> r = map(f, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+>>> list(r) # 这里要转成list
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+# map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回
+# map()接收一个函数 f 和一个 list, 并通过把函数 f 依次作用在 list 的每个元素上，得到一个新的 Iterator 并返回
+
+list(map(str, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 # reduce()函数接收的参数和 map()类似，一个函数 f，一个list
 # 但行为和 map()不同，reduce()传入的函数f必须接收两个参数，python3不用了
+reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)
 
-filter(lambda x: x > 5, [3, 4, 5, 6, 7]) # => [6, 7]
+from functools import reduce
+
+def str2float(s):
+    DIGITS = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}
+    def char2num(s):
+        return DIGITS[s]
+    s = s.split('.')
+    float1 = reduce(lambda x, y: x * 10 +y, map(char2num, s[0]))
+    float2 = reduce(lambda x, y: x * 0.1 +y, map(char2num, s[1][::-1]))
+    return float1 + float2 * 0.1
+
+
+list(filter(lambda x: x > 5, [3, 4, 5, 6, 7])) # => [6, 7]
 # filter()函数接收一个函数 f 和一个list, 这个函数f的作用是对每个元素进行判断，返回 True或 False
-# filter()根据判断结果自动过滤掉不符合条件的元素，返回由符合条件元素组成的新list。
+# filter()根据判断结果 True 或者 False 自动过滤掉不符合条件的元素，返回由符合条件元素组成的新Iterator。
+
+# 注意到filter()函数返回的是一个Iterator，也就是一个惰性序列，所以要强迫filter()完成计算结果，需要用list()函数获得所有结果并返回list。
+def is_palindrome(n):
+     s = str(n)
+     if s == s[::-1]:
+        return n
+
 
 sorted(iterable, key = None, reverse = False)
 # sort 与 sorted 区别：
 # sort 是应用在 list 上的方法，sorted 可以对所有可迭代的对象进行排序操作。
 # list 的 sort 方法返回的是对已经存在的列表进行操作，而内建函数 sorted 方法返回的是一个新的 list，而不是在原来的基础上进行的操作。
-# key – 主要是用来进行比较的元素，只有一个参数，具体的函数的参数就是取自于可迭代对象中，指定可迭代对象中的一个元素来进行排序。
+# key – 函数规则
 # reverse – 排序规则，reverse = True 降序 ， reverse = False 升序（默认）。
 sorted([5, 2, 4, 3, 1]) #=> [1, 2, 3, 4, 5]
 sorted({5:'D', 2 : 'A' , 4 : 'D', 3 : 'C', 1: 'D'}) #=> [1, 2, 3, 4, 5] 
+
+>>> sorted([36, 5, -12, 9, -21], key=abs) # 按绝对值大小排序
+[5, 9, -12, -21, 36]
+
+>>> sorted(['bob', 'about', 'Zoo', 'Credit'])
+# 默认情况下，对字符串排序，是按照ASCII的大小比较的，由于'Z' < 'a'，结果，大写字母Z会排在小写字母a的前面。
+['Credit', 'Zoo', 'about', 'bob']
+
+>>> sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower) # 所有转换成小写
+['about', 'bob', 'Credit', 'Zoo']
+
+
+def by_name(t): # 按姓名首字母
+    return t[0] 
+def by_score(t): # 按分数从高到低
+    return 100 - t[1]
+L = [('Bob', 75), ('Adam', 92), ('Bart', 66), ('Lisa', 88)]
+L2 = sorted(L, key=by_name)
+L2 = sorted(L, key=by_score)
+print(L2)
+
+
 
 
 # 用列表推导式可以简化映射和过滤。列表推导式的返回值是另一个列表。
@@ -340,6 +609,123 @@ def now():
 f = now
 now.__name_ # => "now"
 f.__name_ # => "now"
+
+
+
+
+
+# 递归函数 在函数内部调用自己
+def fact(n):
+    if n==1:
+        return 1
+    return n * fact(n - 1)
+  
+# 使用递归函数需要注意防止栈溢出。在计算机中，函数调用是通过栈（stack）这种数据结构实现的，每当进入一个函数调用，栈就会加一层栈帧，每当函数返回，栈就会减一层栈帧。由于栈的大小不是无限的，所以，递归调用的次数过多，会导致栈溢出。可以试试fact(1000)：RuntimeError: maximum recursion depth exceeded in comparison
+
+# 解决 递归调用栈溢出 的方法是通过 尾递归优化 ，事实上尾递归和循环的效果是一样的，所以，把循环看成是一种特殊的尾递归函数也是可以的。
+# 尾递归是指，在函数返回的时候，调用自身本身，并且，return语句不能包含表达式。这样，编译器或者解释器就可以把尾递归做优化，使递归本身无论调用多少次，都只占用一个栈帧，不会出现栈溢出的情况。
+
+# 上面的fact(n)函数由于return n * fact(n - 1)引入了乘法表达式，所以就不是尾递归了。要改成尾递归方式，需要多一点代码，主要是要把每一步的乘积传入到递归函数中：
+
+def fact(n):
+    return fact_iter(n, 1)
+
+def fact_iter(num, product):
+    if num == 1:
+        return product
+    return fact_iter(num - 1, num * product) # 仅返回递归函数本身
+  # num - 1 和 num * product 在函数调用前就会被计算，不影响函数调用。
+  
+# fact(5)对应的fact_iter(5, 1)的调用如下：
+#===> fact_iter(5, 1)
+#===> fact_iter(4, 5)
+#===> fact_iter(3, 20)
+#===> fact_iter(2, 60)
+#===> fact_iter(1, 120)
+#===> 120
+
+
+
+# 返回函数 闭包
+
+def calc_sum(*args):
+    ax = 0
+    for n in args:
+        ax = ax + n
+    return ax
+  
+def lazy_sum(*args):
+    def sum():
+        ax = 0
+        for n in args:
+            ax = ax + n
+        return ax
+    return sum  # 不需要立刻求和，而是在后面的代码中 返回函数
+# 当我们调用lazy_sum()时，返回的并不是求和结果，而是求和函数：
+>>> f = lazy_sum(1, 3, 5, 7, 9)# 参数和变量都保存在返回的函数中
+>>> f
+<function lazy_sum.<locals>.sum at 0x101c6ed90>
+>>> f() # 只有真的调用函数才会求和
+25
+# 在这个例子中，我们在函数lazy_sum中又定义了函数sum，并且，内部函数sum可以引用外部函数lazy_sum的参数和局部变量，当lazy_sum返回函数sum时，相关参数和变量都保存在返回的函数中，这种称为“闭包（Closure）”的程序结构拥有极大的威力
+
+# 请再注意一点，当我们调用lazy_sum()时，每次调用都会返回一个新的函数，即使传入相同的参数：
+>>> f1 = lazy_sum(1, 3, 5, 7, 9)
+>>> f2 = lazy_sum(1, 3, 5, 7, 9)
+>>> f1==f2
+False
+# f1()和f2()的调用结果互不影响。
+
+def count():
+    fs = []
+    for i in range(1, 4):
+        def f():
+             return i*i
+        fs.append(f)
+    return fs
+
+f1, f2, f3 = count()
+
+
+def createCounter():
+    i = 0
+    def counter():
+        nonlocal i # 这里nonlocal声明之后，x的地址和前边x=0是一样的
+        # x保存内函数counter每次作用后返回的值，比如第一次x=0，counter()后，x=0+1=1，counter（）后，x=1+1=2......以此类推
+        i += 1
+        return i
+    return counter
+  
+def createCounter():
+
+    def g():    #生成器生成有序数列1，2，3......
+
+        n=0
+
+        while True:
+
+            n+=1
+
+            yield n
+
+    a=g()
+
+    def counter():
+
+        return next(a)  #每次调用next()函数获得生成器的下一个返回值
+
+    return counter
+  
+# 偏函数
+# Python的functools模块提供了很多有用的功能，其中一个就是偏函数（Partial function）。要注意，这里的偏函数和数学意义上的偏函数不一样。
+# functools.partial把一个函数的某些参数给固定住（也就是设置默认值），返回一个新的函数，调用这个新函数会更简单。
+
+>>> import functools
+>>> int2 = functools.partial(int, base=2) # 用已有的int()函数，改变base = 2 
+>>> int2('1000000')
+64
+>>> int2('1010101')
+85
 
 ```
 
@@ -394,6 +780,9 @@ j.get_species() # => “H. neanderthalensis”
 
 # 调用静态方法
 Human.grunt() # => “*grunt*“
+
+
+# 返回函数
 
 ```
 
@@ -465,7 +854,65 @@ class Student(object):
 
 
 
-**模块**
+# **模块**
+
+标准模块书写：
+
+```python
+#!/usr/bin/env python3 
+# -*- coding: utf-8 -*- 
+
+' a test module '
+
+__author__ = 'Francis'
+
+import sys
+
+def test():
+    args = sys.argv
+    if len(args)==1:
+        print('Hello, world!')
+    elif len(args)==2:
+        print('Hello, %s!' % args[1])
+    else:
+        print('Too many arguments!')
+
+if __name__=='__main__':
+    test()
+```
+
+* 第1行和第2行是标准注释，第1行注释可以让这个`hello.py`文件直接在Unix/Linux/Mac上运行，第2行注释表示.py文件本身使用标准UTF-8编码；
+
+* 第4行是一个字符串，表示模块的文档注释，任何模块代码的第一个字符串都被视为模块的文档注释；
+
+* 第6行使用`__author__`变量把作者写进去，这样当你公开源代码后别人就可以瞻仰你的大名；
+
+* `sys`模块有一个`argv`变量，用list存储了命令行的所有参数。`argv`至少有一个元素，因为第一个参数永远是该.py文件的名称，例如：
+
+  运行`python3 hello.py`获得的`sys.argv`就是`['hello.py']`；
+
+  运行`python3 hello.py Francis`获得的`sys.argv`就是`['hello.py', 'Francis']`。
+
+用命令行：
+
+```
+$ python3 hello.py
+Hello, world!
+$ python3 hello.py Francis
+Hello, Francis!
+```
+
+
+
+**作用域**
+
+* 正常的函数和变量名是公开的（public），可以被直接引用，比如：`abc`，`x123`，`PI`等；
+
+* 类似`__xxx__`这样的变量是特殊变量，可以被直接引用，但是有特殊用途，比如上面的`__author__`，`__name__`就是特殊变量，`hello`模块定义的文档注释也可以用特殊变量`__doc__`访问，我们自己的变量一般不要用这种变量名；
+
+* 类似`_xxx()`和`__xxx`这样的函数或变量就是非公开的（private），不应该被直接引用，比如`_abc()`，`__abc`等；
+
+
 
 ```python
 # 用import导入模块
@@ -495,7 +942,7 @@ dir(math)
 
 
 
-**高级用法**
+## **高级用法**
 
 ```python
 # 用生成器(generators)方便地写惰性运算
@@ -514,6 +961,15 @@ for i in double_numbers(range_):
   if i >= 30:
     break
 
+    
+    
+    
+    
+    
+    
+    
+    
+   
 # 装饰器(decorators)
 
 def now():
