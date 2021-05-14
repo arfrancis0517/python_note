@@ -733,6 +733,20 @@ def createCounter():
 
 # 类
 
+面向对象最重要的概念就是类（Class）和实例（Instance），必须牢记类是抽象的模板，比如Student类，而实例是根据类创建出来的一个个具体的“对象”，每个对象都拥有相同的方法，但各自的数据可能不同。
+
+创建实例是通过类名+()实现的
+
+```python
+>>> bart = Student()
+>>> bart
+<__main__.Student object at 0x10a67a590> # 变量bart指向的就是一个Student的实例，后面的0x10a67a590是内存地址，每个object的地址都不一样
+>>> Student
+<class '__main__.Student'> # 而Student本身则是一个类
+```
+
+可以自由地给一个实例变量绑定属性，比如，给实例`bart`绑定一个`name`属性：`bart.name = 'Bart Simpson'` 不用在class里定义
+
 ```python
 # 定义一个继承object的类
 class Human(object):
@@ -742,25 +756,27 @@ class Human(object):
     # 构造方法，当实例被初始化时被调用。
     # 注意名字前后的双下划线，这是表明这个属性或方法对Python有特殊意义，但是允许用户自行定义。
     # 你自己取名时不应该用这种格式。
+    # 由于类可以起到模板的作用，因此，可以在创建实例的时候，把一些我们认为必须绑定的属性强制填写进去。通过定义一个特殊的__init__方法，在创建实例的时候，就把name，score等属性绑上去：
     def __init__(self, name):
         # Assign the argument to the instance's name attribute
-        #__init__ 方法的第一参数永远是 self，用来表示类创建的实例本身, self.name 是实例的属性, = name 是外部赋值
+        #__init__ 方法的第一参数永远是 self 用来表示类(创建的实例)本身, self.name 是类的属性, = name 是外部赋值
         self.name = name
 
-    # 实例方法 instance function，第一个参数总是self，就是这个实例对象
+    # 类方法 class function，第一个参数总是self，就是这个类，也就是后面引用的实例
     def say(self, msg):
         return "{name}: {message}".format(name=self.name, message=msg) # 可以在方法内加新属性
-
+                                       # name, message 这里是新的参数
     # 类方法，被所有此类的实例共用。第一个参数是这个类对象。
-    # @classmethod
+    @classmethod
     def get_species(cls):
         return cls.species # species = "H. sapiens"
-
-    # 静态方法。调用时没有实例或类的绑定。
-    # @staticmethod
+    # classmethod 修饰符对应的函数不需要实例化，不需要 self 参数，但第一个参数需要是表示自身类的 cls 参数，可以来调用类的属性，类的方法，实例化对象等。 cls.species 还可以 cls().say() 
+>>> Human.get_species() # 不需要实例化 => "H. sapiens"
+    
+    # 静态方法。调用时没有实例或类的绑定。该方法不强制要求传递参数
+    @staticmethod
     def grunt():
         return "*grunt*"
-      
       
       
 # 构造一个实例
@@ -781,9 +797,6 @@ j.get_species() # => “H. neanderthalensis”
 # 调用静态方法
 Human.grunt() # => “*grunt*“
 
-
-# 返回函数
-
 ```
 
 
@@ -798,8 +811,9 @@ class Student(object):
         self.name = name
         self.score = score
 
-## _init_() 是初始化 给类定义自己的属性变量 self这里指代类Student
+## _init_() 是初始化 给类定义自己的属性变量 self这里指代类Student的实例
 ## 这里只是在声明变量
+
 
 student = Student("Hugh", 99)
 ## 数据来自于外部
@@ -851,6 +865,16 @@ class Student(object):
 >>> student.get_grade()
 'A'
 ```
+
+
+
+## 继承和多态
+
+
+
+
+
+
 
 
 
